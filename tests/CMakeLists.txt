@@ -6,7 +6,11 @@ enable_testing()
 
 find_package(GTest REQUIRED)
 
-add_executable(tests assert_true.cpp)
+add_executable(tests tape_test.cpp sort_test.cpp)
 
-target_link_libraries(tests GTest::gtest GTest::gtest_main)
+target_link_libraries(tests GTest::gtest GTest::gtest_main tape sort)
+target_include_directories(tests PRIVATE 
+    ${CMAKE_HOME_DIRECTORY}/tape
+    ${CMAKE_HOME_DIRECTORY}/sort
+    )
 gtest_discover_tests(tests)
