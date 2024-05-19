@@ -10,7 +10,21 @@ class i_tape {
     virtual void put(int x) = 0;
     virtual void left() = 0;
     virtual void right() = 0;
-    // virtual void flip() = 0; // flips right and left
-    virtual void print() = 0;
+    virtual void flip() = 0;
+    // virtual void print() = 0;
     virtual void skip_n(std::int64_t delta) = 0;
+
+    // i_tape& operator++() {
+    //     right();
+    //     return *this;
+    // }
+
+    // i_tape& operator--() {
+    //     left();
+    //     return *this;
+    // }
+
+    // std::int32_t operator*() const {
+    //     return get();
+    // }
 };

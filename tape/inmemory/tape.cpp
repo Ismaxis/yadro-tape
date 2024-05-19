@@ -5,32 +5,58 @@ namespace inmemory {
 int tape::get() const {
     return q[index];
 }
+
 void tape::put(int x) {
     q[index] = x;
 }
-void tape::left() {
+
+namespace {
+void left_impl(std::deque<std::int32_t>& q, std::size_t& index) {
     if (index == 0) {
-        q.push_front(DEFAULT_VALUE);
+        q.push_front(i_tape::DEFAULT_VALUE);
     } else {
         --index;
     }
 }
-void tape::right() {
+void right_impl(std::deque<std::int32_t>& q, std::size_t& index) {
     ++index;
     if (index >= q.size()) {
-        q.push_back(DEFAULT_VALUE);
+        q.push_back(i_tape::DEFAULT_VALUE);
     }
 }
-void tape::print() {
-    for (size_t i = 0; i < q.size(); i++) {
-        if (i == index) {
-            std::cout << '[' << q[i] << "] ";
-        } else {
-            std::cout << q[i] << ' ';
-        }
+}  // namespace
+
+void tape::left() {
+    if (flipped) {
+        inmemory::right_impl(q, index);
+    } else {
+        inmemory::left_impl(q, index);
     }
-    std::cout << '\n';
 }
+
+void tape::right() {
+    if (flipped) {
+        inmemory::left_impl(q, index);
+    } else {
+        inmemory::right_impl(q, index);
+    }
+}
+
+// void tape::print() {
+//     for (size_t i = 0; i < q.size(); i++) {
+//         if (i == index) {
+//             std::cout << '[' << q[i] << "] ";
+//         } else {
+//             std::cout << q[i] << ' ';
+//         }
+//     }
+//     std::cout << '\n';
+// }
+
+void tape::flip() {
+    flipped = !flipped;
+}
+
 void tape::skip_n(std::int64_t delta) {
     if (delta >= 0) {
         for (size_t i = 0; i < delta; i++) {

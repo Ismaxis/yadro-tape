@@ -4,8 +4,6 @@
 #include <functional>
 #include <memory>
 
-void tape_sort(i_tape& input, std::size_t n, i_tape& output);
-
 void tape_sort(
     i_tape& input,
     std::size_t n,
