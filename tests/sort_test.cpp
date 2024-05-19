@@ -11,7 +11,7 @@ TEST(sort, empty) {
     tape input;
     tape output;
 
-    tape_sort(&input, 0, &output);
+    tape_sort(input, 0, output);
 
     ASSERT_EQ(i_tape::DEFAULT_VALUE, input.get());
     ASSERT_EQ(i_tape::DEFAULT_VALUE, output.get());
@@ -23,7 +23,7 @@ TEST(sort, single) {
 
     input.put(1);
 
-    tape_sort(&input, 1, &output);
+    tape_sort(input, 1, output);
 
     ASSERT_EQ(1, output.get());
 }
@@ -43,7 +43,7 @@ TEST(sort, small) {
         input.left();
     }
 
-    tape_sort(&input, size, &output);
+    tape_sort(input, size, output);
 
     std::ranges::sort(seq);
 
