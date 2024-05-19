@@ -1,4 +1,4 @@
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/inmemory/*.cpp)
+file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 add_library(tape ${SOURCES})
 

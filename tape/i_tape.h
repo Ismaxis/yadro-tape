@@ -8,11 +8,11 @@ class i_tape {
 
     virtual std::int32_t get() const = 0;
     virtual void put(int x) = 0;
-    virtual void left() = 0;
-    virtual void right() = 0;
-    virtual void flip() = 0;
-    // virtual void print() = 0;
-    virtual void skip_n(std::int64_t delta) = 0;
+
+    void left();
+    void right();
+    void flip();
+    void skip_n(std::int64_t delta);
 
     // i_tape& operator++() {
     //     right();
@@ -27,4 +27,11 @@ class i_tape {
     // std::int32_t operator*() const {
     //     return get();
     // }
+
+   protected:
+    virtual void left_impl() = 0;
+    virtual void right_impl() = 0;
+
+   private:
+    bool flipped{false};
 };
