@@ -17,5 +17,7 @@ class tape : public i_tape {
     void put(int x) override;
     void left() override;
     void right() override;
+    void print() override;
+    void skip_n(std::int64_t delta) override;
 };
 }  // namespace inmemory
