@@ -18,7 +18,7 @@ TEST(file, right) {
             }
         }
 
-        std::fstream f("tmp", std::ios::in | std::ios::out | std::ios::binary);
+        std::fstream f("tmp", std::ios::in | std::ios::binary);
         std::vector<int32_t> v;
         bin_util::read_vector(f, seq.size(), v);
 
@@ -39,7 +39,7 @@ TEST(file, left) {
             }
         }
 
-        std::fstream f("tmp", std::ios::in | std::ios::out | std::ios::binary);
+        std::fstream f("tmp", std::ios::in | std::ios::binary);
         std::vector<int32_t> v;
         bin_util::read_vector(f, seq.size(), v);
         std::ranges::reverse(v);
