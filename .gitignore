@@ -4,6 +4,3 @@ cmake-build-*/
 .vscode/
 *.exe
 *.out
-
-in.txt
-out.txt
