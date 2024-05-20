@@ -47,7 +47,6 @@ void tape_sort(i_tape& input, std::size_t n, i_tape& output,
 
 namespace {
 
-// TODO: iterators
 void copy_n(i_tape& from, size_t n, i_tape& to) {
     for (size_t i = 0; i < n; i++) {
         to.put(from.get());
@@ -95,7 +94,6 @@ void merge(i_tape& buff_0, i_tape& buff_1, i_tape& ptr_0, size_t left_n, size_t 
         j++;
     }
 
-    ptr_0.left();
-    ptr_0.flip();
+    ptr_0.skip_n(-left_n);
 }
 }  // namespace
