@@ -1,10 +1,10 @@
 #include "inmemory_tape.h"
 
-int inmemory_tape::get() const {
+std::int32_t inmemory_tape::get() const {
     return q[index];
 }
 
-void inmemory_tape::put(int x) {
+void inmemory_tape::put(std::int32_t x) {
     q[index] = x;
 }
 

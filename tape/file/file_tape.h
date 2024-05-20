@@ -11,12 +11,12 @@ class file_tape : public tape {
     constexpr static std::size_t BUFF_SIZE = 512;
 
    public:
-    file_tape(std::filesystem::path filepath, tape_delays delays = tape_delays{});
+    explicit file_tape(std::filesystem::path filepath, tape_delays delays = tape_delays{});
 
     virtual ~file_tape() override;
 
-    int get() const override;
-    void put(int x) override;
+    std::int32_t get() const override;
+    void put(std::int32_t x) override;
     void left() override;
     void right() override;
     void reset() override;

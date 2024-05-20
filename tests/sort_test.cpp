@@ -39,7 +39,7 @@ void test_on_seq(std::vector<std::int32_t> seq) {
     file_tape output("out");
 
     auto size = seq.size();
-    for (size_t i = 0; i < size; i++) {
+    for (std::size_t i = 0; i < size; i++) {
         input.put(seq[i]);
         input.right();
     }

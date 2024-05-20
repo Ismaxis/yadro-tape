@@ -37,7 +37,7 @@ TEST(inmemory_tape, sequence) {
         t.right();
     }
 
-    for (size_t i = size - 1; i < size; i--) {
+    for (std::size_t i = size - 1; i < size; i--) {
         t.left();
         ASSERT_EQ(seq[i], t.get());
     }

@@ -22,7 +22,7 @@ inline std::vector<std::int32_t> get_random_vec(
 inline void test_random_vec(std::size_t max_size, std::function<void(std::vector<std::int32_t>)> test, std::size_t test_cases = 10) {
     std::mt19937 random{std::random_device{}()};
     std::uniform_int_distribution<std::int32_t> dist(1, max_size);
-    for (size_t test_case = 0; test_case < test_cases; test_case++) {
+    for (std::size_t test_case = 0; test_case < test_cases; test_case++) {
         std::vector<std::int32_t> v = test_util::get_random_vec(dist(random));
         test(v);
     }

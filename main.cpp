@@ -46,7 +46,7 @@ std::size_t input_to_binary(std::string& input, std::filesystem::path& bin_in_fi
 
     std::fstream bin_in(bin_in_filename, std::fstream::binary | std::fstream::out | std::fstream::trunc);
     if (!bin_in.is_open()) {
-        throw std::runtime_error(std::string("Can't create tmp input file: ") + bin_in_filename.generic_string());
+        throw std::runtime_error("Can't create tmp input file: " + bin_in_filename.generic_string());
     }
     std::size_t n = bin_util::to_binary(in, bin_in);
     if (FLAGS_v) {
@@ -55,7 +55,7 @@ std::size_t input_to_binary(std::string& input, std::filesystem::path& bin_in_fi
     return n;
 }
 
-void binary_to_output(std::string& ouptut, std::filesystem::path& bin_out_filename, size_t n) {
+void binary_to_output(std::string& ouptut, std::filesystem::path& bin_out_filename, std::size_t n) {
     {
         std::fstream out(ouptut, std::fstream::out | std::fstream::trunc);
         if (!out.is_open()) {
@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
 
     if (argc > 1) {
         std::stringstream ss;
-        for (size_t i = 1; i < argc; ++i) {
+        for (std::size_t i = 1; i < argc; ++i) {
             ss << "'" << argv[i] << "' ";
         }
         error("Unknown argument(s): " + ss.str());

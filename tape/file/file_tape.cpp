@@ -33,12 +33,12 @@ void sleep_if(std::int64_t delay) {
 }
 }  // namespace
 
-int file_tape::get() const {
+std::int32_t file_tape::get() const {
     sleep_if(delays.get_delay);
     return buff[index_in_buffer];
 }
 
-void file_tape::put(int x) {
+void file_tape::put(std::int32_t x) {
     sleep_if(delays.put_delay);
     buff[index_in_buffer] = x;
 }
