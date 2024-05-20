@@ -24,22 +24,64 @@ using tape = file::tape;
 //     ASSERT_EQ(125, t.get());
 // }
 
-TEST(file, right) {
-    auto size = 11;
-    std::vector<std::int32_t> seq = test_util::get_random_vec(size, 0, 10);
+auto size = 1024;
 
-    std::fstream f("tmp", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-    {
+TEST(file, right) {
+    test_util::test_random_vec(size, [](auto seq) {
+        std::fstream f("tmp", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+        {
+            tape t(f);
+            for (auto &&i : seq) {
+                t.put(i);
+                t.right();
+            }
+        }
+
+        f.seekg(0, f.beg);
+        std::vector<int32_t> v;
+        bin_util::read_vector(f, seq.size(), v);
+
+        ASSERT_EQ(seq, v);
+    });
+}
+
+TEST(file, left) {
+    test_util::test_random_vec(size, [](auto seq) {
+        std::fstream f("tmp", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+        {
+            tape t(f);
+            for (auto &&i : seq) {
+                t.right();
+            }
+            for (auto &&i : seq) {
+                t.left();
+                t.put(i);
+            }
+        }
+
+        f.seekg(0, f.beg);
+        std::vector<int32_t> v;
+        bin_util::read_vector(f, seq.size(), v);
+        std::ranges::reverse(v);
+        ASSERT_EQ(seq, v);
+    });
+}
+
+TEST(file, right_and_left) {
+    test_util::test_random_vec(size, [](auto seq) {
+        std::fstream f("tmp", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+
         tape t(f);
         for (auto &&i : seq) {
             t.put(i);
             t.right();
         }
-    }
 
-    f.seekg(0, f.beg);
-    std::vector<int32_t> v;
-    bin_util::read_vector(f, seq.size(), v);
+        std::ranges::reverse(seq);
 
-    ASSERT_EQ(seq, v);
+        for (auto &&i : seq) {
+            t.left();
+            ASSERT_EQ(i, t.get());
+        }
+    });
 }
