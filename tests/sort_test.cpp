@@ -24,8 +24,8 @@ constexpr auto factory = [] {
 };
 
 TEST(sort, empty) {
-    tape input("in", true);
-    tape output("out", true);
+    tape input("empty_in");
+    tape output("empty_out");
 
     tape_sort(input, 0, output, factory);
 
