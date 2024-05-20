@@ -4,7 +4,7 @@
 
 #include "test_util.h"
 
-TEST(inmemory, basic) {
+TEST(inmemory_tape, basic) {
     inmemory_tape t;
     ASSERT_EQ(tape::DEFAULT_VALUE, t.get());
 
@@ -27,7 +27,7 @@ TEST(inmemory, basic) {
     ASSERT_EQ(125, t.get());
 }
 
-TEST(inmemory, sequence) {
+TEST(inmemory_tape, sequence) {
     auto size = 10;
     std::vector<std::int32_t> seq = test_util::get_random_vec(size);
 

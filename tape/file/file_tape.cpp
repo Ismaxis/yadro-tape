@@ -1,7 +1,7 @@
 #include "file_tape.h"
 
-file_tape::file_tape(const std::string& filename) : buff(BUFF_SIZE),
-                                                    prev_buff(BUFF_SIZE) {
+file_tape::file_tape(const std::string& filename) : buff(BUFF_SIZE, DEFAULT_VALUE),
+                                                    prev_buff(BUFF_SIZE, DEFAULT_VALUE) {
     f.open(filename, std::fstream::binary | std::fstream::in | std::fstream::out);
     if (!f.is_open()) {
         f.open(filename, std::fstream::binary | std::fstream::in | std::fstream::out | std::fstream::trunc);
