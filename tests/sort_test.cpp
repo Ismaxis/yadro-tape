@@ -3,7 +3,7 @@
 #include <inmemory/tape.h>
 #include <tape_sort.h>
 
-#include "util.h"
+#include "test_util.h"
 
 using tape = inmemory::tape;
 
@@ -59,12 +59,5 @@ TEST(sort, sorted) {
 }
 
 TEST(sort, random) {
-    std::size_t max_size = 40;
-    std::mt19937 random{std::random_device{}()};
-    std::uniform_int_distribution<std::int32_t> dist(1, max_size);
-    for (size_t test_case = 0; test_case < 10; test_case++) {
-        std::size_t size = dist(random);
-        auto seq = util::get_random_vec(size);
-        test_on_seq(seq);
-    }
+    test_util::test_random_vec(40, test_on_seq);
 }

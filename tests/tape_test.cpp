@@ -2,7 +2,7 @@
 #include <i_tape.h>
 #include <inmemory/tape.h>
 
-#include "util.h"
+#include "test_util.h"
 
 using tape = inmemory::tape;
 
@@ -31,7 +31,7 @@ TEST(inmemory, basic) {
 
 TEST(inmemory, sequence) {
     auto size = 10;
-    std::vector<std::int32_t> seq = util::get_random_vec(size);
+    std::vector<std::int32_t> seq = test_util::get_random_vec(size);
 
     tape t;
     for (auto &&i : seq) {
