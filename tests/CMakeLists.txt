@@ -10,10 +10,10 @@ file(GLOB TESTS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 add_executable(tests ${TESTS})
 
-target_link_libraries(tests GTest::gtest GTest::gtest_main tape sort bin-util)
-target_include_directories(tests PRIVATE 
+target_link_libraries(tests GTest::gtest GTest::gtest_main sort tape util)
+target_include_directories(tests PUBLIC 
     ${CMAKE_HOME_DIRECTORY}/tape
     ${CMAKE_HOME_DIRECTORY}/sort
-    ${CMAKE_HOME_DIRECTORY}/bin_util
+    ${CMAKE_HOME_DIRECTORY}/util
     )
 gtest_discover_tests(tests)

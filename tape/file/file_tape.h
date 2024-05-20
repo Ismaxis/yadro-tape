@@ -1,8 +1,7 @@
 #pragma once
 
-#include <bin_util.h>
-
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <vector>
 
@@ -12,7 +11,7 @@ class file_tape : public tape {
     constexpr static std::size_t BUFF_SIZE = 512;
 
    public:
-    file_tape(const std::string& filename);
+    file_tape(std::filesystem::path filepath);
 
     virtual ~file_tape() override;
 

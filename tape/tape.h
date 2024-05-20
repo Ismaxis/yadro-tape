@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-class tape {  // TODO: abstract_tape
+class tape {
    public:
     constexpr static std::int32_t DEFAULT_VALUE = 0;
 

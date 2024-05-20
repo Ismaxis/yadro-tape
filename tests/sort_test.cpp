@@ -1,24 +1,16 @@
 #include <file/file_tape.h>
+#include <file_util.h>
 #include <gtest/gtest.h>
 #include <tape.h>
 #include <tape_sort.h>
 
 #include <array>
+#include <filesystem>
 
 #include "test_util.h"
 
-std::array<std::string, 3> files{
-    "buff_0",  // https://en.cppreference.com/w/cpp/io/c/tmpnam
-    "buff_1",
-    "ptr_0",
-};
-
 constexpr auto factory = [] {
-    static std::size_t i = 0;
-    if (i == files.size()) {
-        i = 0;
-    }
-    return std::make_unique<file_tape>(files[i++]);
+    return std::make_unique<file_tape>(file_util::new_tmp_file());
 };
 
 TEST(sort, empty) {

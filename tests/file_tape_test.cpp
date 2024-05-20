@@ -1,3 +1,4 @@
+#include <bin_util.h>
 #include <file/file_tape.h>
 #include <gtest/gtest.h>
 #include <tape.h>

@@ -6,9 +6,11 @@ project(tape)
 set(CMAKE_CXX_STANDARD 20)
 
 enable_testing()
+add_subdirectory(util)
 add_subdirectory(tape)
 add_subdirectory(sort)
-add_subdirectory(bin_util)
 add_subdirectory(tests)
 
 add_executable(tape-main main.cpp)
+target_link_libraries(tape-main sort tape util)
+target_include_directories(tape-main PRIVATE ${CMAKE_HOME_DIRECTORY})

@@ -2,3 +2,8 @@ build/
 .idea/
 cmake-build-*/
 .vscode/
+*.exe
+*.out
+
+in.txt
+out.txt
