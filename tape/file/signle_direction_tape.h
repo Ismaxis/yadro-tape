@@ -15,7 +15,8 @@ class signle_direction_tape : public i_tape {
    public:
     signle_direction_tape(const std::string& filename)
         : f(filename, std::ios::in | std::ios::out | std::ios::binary),
-          buff(BUFF_SIZE) {
+          buff(BUFF_SIZE),
+          prev_buff(BUFF_SIZE) {
         if (!f) {
             f.open(filename, std::fstream::binary | std::fstream::trunc | std::fstream::out);
             f.close();
@@ -24,8 +25,16 @@ class signle_direction_tape : public i_tape {
         fill_buffer();
     }
     virtual ~signle_direction_tape() override {
-        f.seekg(buffers_from_start * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
+        if (is_prev_full && is_prev_left) {
+            f.seekg((buffers_from_start - 1) * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
+            bin_util::write_vector(prev_buff, f);
+        } else {
+            f.seekg(buffers_from_start * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
+        }
         bin_util::write_vector(buff, f);
+        if (is_prev_full && !is_prev_left) {
+            bin_util::write_vector(prev_buff, f);
+        }
     }
 
     int get() const override {
@@ -43,31 +52,77 @@ class signle_direction_tape : public i_tape {
             --index_in_buffer;
             return;
         }
+        index_in_buffer = BUFF_SIZE - 1;
 
-        f.seekg(buffers_from_start * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
-        bin_util::write_vector(buff, f);
+        if (is_prev_full) {
+            if (handle_prev(true)) {
+                return;
+            }
+            // if (is_prev_left) {
+            //     std::swap(buff, prev_buff);
+            //     is_prev_left = false;
+            //     --buffers_from_start;
+            //     return;
+            // } else {
+            //     f.seekg((buffers_from_start + 1) * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
+            //     bin_util::write_vector(prev_buff, f);
+            // }
+        }
+        std::swap(buff, prev_buff);
+        is_prev_full = true;
+        is_prev_left = false;
 
         f.seekg((buffers_from_start - 1) * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
         fill_buffer();
 
         --buffers_from_start;
-        index_in_buffer = BUFF_SIZE - 1;
     }
     void right_impl() override {
         ++index_in_buffer;
         if (index_in_buffer < buff.size()) {
             return;
-        };
-        f.seekg(buffers_from_start * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
-        bin_util::write_vector(buff, f);
+        }
+        index_in_buffer = 0;
 
+        if (is_prev_full) {
+            if (handle_prev(false)) {
+                return;
+            }
+            // if (!is_prev_left) {
+            //     std::swap(buff, prev_buff);
+            //     is_prev_left = true;
+            //     ++buffers_from_start;
+            //     return;
+            // } else if (buffers_from_start > 0) {
+            //     f.seekg((buffers_from_start - 1) * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
+            //     bin_util::write_vector(prev_buff, f);
+            // }
+        }
+        std::swap(buff, prev_buff);
+        is_prev_full = true;
+        is_prev_left = true;
+
+        f.seekg((buffers_from_start + 1) * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
         fill_buffer();
 
         ++buffers_from_start;
-        index_in_buffer = 0;
     }
 
    private:
+    bool handle_prev(bool is_left) {
+        auto offset = is_left ? -1 : 1;
+        if (is_prev_left == is_left) {
+            std::swap(buff, prev_buff);
+            is_prev_left = !is_left;
+            buffers_from_start += offset;
+            return true;
+        } else if (is_left || buffers_from_start > 0) {
+            f.seekg((buffers_from_start - offset) * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
+            bin_util::write_vector(prev_buff, f);
+        }
+        return false;
+    }
+
     void fill_buffer() {
         bin_util::read_vector(f, BUFF_SIZE, buff);
         if (f.eof()) {
@@ -77,8 +132,11 @@ class signle_direction_tape : public i_tape {
 
    private:
     std::fstream f;
-    std::vector<std::int32_t> buff;
     std::size_t index_in_buffer{};
     std::size_t buffers_from_start{};
+    std::vector<std::int32_t> buff;
+    std::vector<std::int32_t> prev_buff;
+    bool is_prev_full{false};
+    bool is_prev_left{false};
 };
 }  // namespace file
