@@ -1,10 +1,23 @@
 #include "file_tape.h"
 
-file_tape::file_tape(const std::string& filename) : buff(BUFF_SIZE, DEFAULT_VALUE),
-                                                    prev_buff(BUFF_SIZE, DEFAULT_VALUE) {
-    f.open(filename, std::fstream::binary | std::fstream::in | std::fstream::out);
+#include <bin_util.h>
+
+#include <chrono>
+#include <thread>
+
+namespace {
+auto binary_read_write = std::fstream::binary | std::fstream::in | std::fstream::out;
+auto binary_create_read_write = binary_read_write | std::fstream::trunc;
+using mc = std::chrono::microseconds;
+}  // namespace
+
+file_tape::file_tape(std::filesystem::path filepath, tape_delays delays)
+    : delays(delays),
+      buff(BUFF_SIZE, DEFAULT_VALUE),
+      prev_buff(BUFF_SIZE, DEFAULT_VALUE) {
+    f.open(filepath, ::binary_read_write);
     if (!f.is_open()) {
-        f.open(filename, std::fstream::binary | std::fstream::in | std::fstream::out | std::fstream::trunc);
+        f.open(filepath, ::binary_create_read_write);
     }
     fill_buffer();
 }
@@ -12,16 +25,26 @@ file_tape::file_tape(const std::string& filename) : buff(BUFF_SIZE, DEFAULT_VALU
 file_tape::~file_tape() {
     flush();
 }
+namespace {
+void sleep_if(std::int64_t delay) {
+    if (delay > 0) {
+        std::this_thread::sleep_for(mc(delay));
+    }
+}
+}  // namespace
 
 int file_tape::get() const {
+    sleep_if(delays.get_delay);
     return buff[index_in_buffer];
 }
 
 void file_tape::put(int x) {
+    sleep_if(delays.put_delay);
     buff[index_in_buffer] = x;
 }
 
 void file_tape::left() {
+    sleep_if(delays.left_delay);
     if (index_in_buffer == 0 && buffers_from_start == 0) {
         throw std::runtime_error("signle direction tape error: reached left border");
     } else if (index_in_buffer > 0) {
@@ -34,6 +57,7 @@ void file_tape::left() {
 }
 
 void file_tape::right() {
+    sleep_if(delays.right_delay);
     ++index_in_buffer;
     if (index_in_buffer < buff.size()) {
         return;
@@ -44,6 +68,7 @@ void file_tape::right() {
 }
 
 void file_tape::reset() {
+    sleep_if(delays.reset_delay);
     flush();
     is_prev_full = false;
     seek_buff(0);

@@ -1,0 +1,7 @@
+{
+    "get_delay": 1000,
+    "put_delay": 1000,
+    "left_delay": 1000,
+    "right_delay": 1000,
+    "reset_delay": 1000
+}

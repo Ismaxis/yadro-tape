@@ -7,10 +7,11 @@
 
 namespace bin_util {
 namespace {
-void copy(std::istream& in,
-          std::ostream& out,
-          std::function<std::int32_t(std::istream&)> read,
-          std::function<void(std::ostream&, std::int32_t)> write);
+std::size_t copy(std::istream& in,
+                 std::ostream& out,
+                 std::function<std::int32_t(std::istream&)> read,
+                 std::function<void(std::ostream&, std::int32_t)> write,
+                 std::size_t limit);
 
 auto _read_binary = [](std::istream& in) {
     std::int32_t x;
@@ -22,22 +23,22 @@ auto _write_binary = [](std::ostream& out, std::int32_t x) {
 };
 }  // namespace
 
-void from_binary(std::istream& in, std::ostream& out) {
+std::size_t from_binary(std::istream& in, std::ostream& out, std::size_t limit) {
     auto write = [](std::ostream& out, std::int32_t x) {
         out << x << ' ';
     };
 
-    copy(in, out, _read_binary, write);
+    return copy(in, out, _read_binary, write, limit);
 }
 
-void to_binary(std::istream& in, std::ostream& out) {
+std::size_t to_binary(std::istream& in, std::ostream& out, std::size_t limit) {
     auto read = [](std::istream& in) {
         std::int32_t x;
         in >> x;
         return x;
     };
 
-    copy(in, out, read, _write_binary);
+    return copy(in, out, read, _write_binary, limit);
 }
 
 void read_vector(std::istream& in, std::size_t n, std::vector<std::int32_t>& v) {
@@ -52,11 +53,13 @@ void write_vector(std::vector<std::int32_t>& v, std::ostream& out) {
 }
 
 namespace {
-void copy(std::istream& in,
-          std::ostream& out,
-          std::function<std::int32_t(std::istream&)> read,
-          std::function<void(std::ostream&, std::int32_t)> write) {
-    while (in) {
+std::size_t copy(std::istream& in,
+                 std::ostream& out,
+                 std::function<std::int32_t(std::istream&)> read,
+                 std::function<void(std::ostream&, std::int32_t)> write,
+                 std::size_t limit) {
+    std::size_t cnt{};
+    for (; in && cnt < limit; cnt++) {
         std::int32_t x = read(in);
         if (in.bad()) {
             throw std::runtime_error("read failure");
@@ -69,6 +72,7 @@ void copy(std::istream& in,
             throw std::runtime_error("write failure");
         }
     }
+    return cnt;
 }
 }  // namespace
 }  // namespace bin_util

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <bin_util.h>
-
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <vector>
 
@@ -12,7 +11,7 @@ class file_tape : public tape {
     constexpr static std::size_t BUFF_SIZE = 512;
 
    public:
-    file_tape(const std::string& filename);
+    file_tape(std::filesystem::path filepath, tape_delays delays = tape_delays{});
 
     virtual ~file_tape() override;
 
@@ -30,6 +29,8 @@ class file_tape : public tape {
     void fill_buffer();
 
    private:
+    tape_delays delays;
+
     std::fstream f;
     std::size_t index_in_buffer{};
     std::size_t buffers_from_start{};
