@@ -63,3 +63,21 @@ TEST(file, right_and_left) {
         }
     });
 }
+
+TEST(file, flip) {
+    test_util::test_random_vec(size, [](auto seq) {
+        tape t("tmp");
+        for (auto &&i : seq) {
+            t.put(i);
+            t.right();
+        }
+
+        std::ranges::reverse(seq);
+
+        t.flip();
+        for (auto &&i : seq) {
+            t.right();
+            ASSERT_EQ(i, t.get());
+        }
+    });
+}
