@@ -6,11 +6,14 @@ enable_testing()
 
 find_package(GTest REQUIRED)
 
-add_executable(tests tape_test.cpp sort_test.cpp)
+file(GLOB TESTS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
-target_link_libraries(tests GTest::gtest GTest::gtest_main tape sort)
+add_executable(tests ${TESTS})
+
+target_link_libraries(tests GTest::gtest GTest::gtest_main tape sort bin-util)
 target_include_directories(tests PRIVATE 
     ${CMAKE_HOME_DIRECTORY}/tape
     ${CMAKE_HOME_DIRECTORY}/sort
+    ${CMAKE_HOME_DIRECTORY}/bin_util
     )
 gtest_discover_tests(tests)
