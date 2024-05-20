@@ -9,6 +9,8 @@ class i_tape {
     virtual std::int32_t get() const = 0;
     virtual void put(int x) = 0;
 
+    virtual ~i_tape() = default;
+
     void left();
     void right();
     void flip();

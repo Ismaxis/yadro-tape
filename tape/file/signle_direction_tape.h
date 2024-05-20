@@ -13,10 +13,12 @@ class signle_direction_tape : public i_tape {
     constexpr static std::size_t BUFF_SIZE = 512;
 
    public:
-    signle_direction_tape(std::fstream& f) : f(f), buff(BUFF_SIZE) {
+    signle_direction_tape(const std::string& filename, bool truncate = false)
+        : f(filename, std::ios::in | std::ios::out | std::ios::binary | (truncate ? std::ios::trunc : std::ios::binary)),
+          buff(BUFF_SIZE) {
         fill_buffer();
     }
-    ~signle_direction_tape() {
+    virtual ~signle_direction_tape() override {
         f.seekg(buffers_from_start * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
         bin_util::write_vector(buff, f);
     }
@@ -69,7 +71,7 @@ class signle_direction_tape : public i_tape {
     }
 
    private:
-    std::fstream& f;
+    std::fstream f;
     std::vector<std::int32_t> buff;
     std::size_t index_in_buffer{};
     std::size_t buffers_from_start{};

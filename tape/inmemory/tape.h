@@ -9,6 +9,8 @@ class tape : public i_tape {
     int get() const override;
     void put(int x) override;
 
+    virtual ~tape() override = default;
+
    protected:
     void left_impl() override;
     void right_impl() override;

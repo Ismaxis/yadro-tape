@@ -9,10 +9,10 @@
 
 using tape = file::signle_direction_tape;
 
-std::array<std::fstream, 3> files{
-    std::fstream("buff_0", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc),
-    std::fstream("buff_1", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc),
-    std::fstream("ptr_0", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc),
+std::array<std::string, 3> files{
+    "buff_0",
+    "buff_1",
+    "ptr_0",
 };
 
 constexpr auto factory = [] {
@@ -24,10 +24,8 @@ constexpr auto factory = [] {
 };
 
 TEST(sort, empty) {
-    std::fstream in("in", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-    std::fstream out("out", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-    tape input(in);
-    tape output(out);
+    tape input("in", true);
+    tape output("out", true);
 
     tape_sort(input, 0, output, factory);
 
@@ -36,10 +34,8 @@ TEST(sort, empty) {
 }
 
 TEST(sort, single) {
-    std::fstream in("in", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-    std::fstream out("out", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-    tape input(in);
-    tape output(out);
+    tape input("in");
+    tape output("out");
 
     input.put(1);
 
@@ -49,10 +45,8 @@ TEST(sort, single) {
 }
 
 void test_on_seq(std::vector<std::int32_t> seq) {
-    std::fstream in("in", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-    std::fstream out("out", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-    tape input(in);
-    tape output(out);
+    tape input("in");
+    tape output("out");
 
     auto size = seq.size();
     for (size_t i = 0; i < size; i++) {
