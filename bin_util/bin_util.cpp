@@ -41,25 +41,14 @@ void to_binary(std::istream& in, std::ostream& out) {
 }
 
 void read_vector(std::istream& in, std::size_t n, std::vector<std::int32_t>& v) {
-    for (size_t i = 0; i < n; i++) {
-        std::int32_t x = _read_binary(in);
-        if (in.bad()) {
-            throw std::runtime_error("read failure");
-        }
-        if (in.eof()) {
-            break;
-        }
-        v.push_back(x);
+    if (v.size() < n) {
+        v.resize(n);
     }
+    in.read(reinterpret_cast<char*>(v.data()), sizeof(std::int32_t) * n);
 }
 
 void write_vector(std::vector<std::int32_t>& v, std::ostream& out) {
-    for (auto&& x : v) {
-        _write_binary(out, x);
-        if (out.bad()) {
-            throw std::runtime_error("write failure");
-        }
-    }
+    out.write(reinterpret_cast<const char*>(v.data()), sizeof(std::int32_t) * v.size());
 }
 
 namespace {
