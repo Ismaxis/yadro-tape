@@ -13,10 +13,29 @@
 
 #include "config/delays.h"
 
+auto example_json = R"(
+{
+    "get_delay": 1000,
+    "put_delay": 1000,
+    "left_delay": 1000,
+    "right_delay": 1000,
+    "reset_delay": 1000
+}
+)";
+
 DEFINE_string(input, "", "Path to input file");
 DEFINE_string(output, "", "Path to output file");
-DEFINE_string(config, "./config.json", "Path to config file");
-DEFINE_bool(v, true, "Show info about tmp files and other");
+DEFINE_string(config, "./config.json", R"(Path to config file. 
+All delays are in microseconds and 0 by default. 
+Example: 
+{
+    "get_delay": 1000,
+    "put_delay": 1000,
+    "left_delay": 1000,
+    "right_delay": 1000,
+    "reset_delay": 1000
+})");
+DEFINE_bool(v, false, "Show info about tmp files and other");
 
 auto is_empty_path = [](const char*, const std::string& path) {
     return !path.empty();
