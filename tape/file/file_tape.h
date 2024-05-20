@@ -6,14 +6,14 @@
 #include <fstream>
 #include <vector>
 
-#include "../i_tape.h"
+#include "../tape.h"
 
-namespace file {
-class signle_direction_tape : public i_tape {
+// TODO: .cpp
+class file_tape : public tape {
     constexpr static std::size_t BUFF_SIZE = 512;
 
    public:
-    signle_direction_tape(const std::string& filename)
+    file_tape(const std::string& filename)
         : buff(BUFF_SIZE),
           prev_buff(BUFF_SIZE) {
         f.open(filename, std::fstream::binary | std::fstream::in | std::fstream::out);
@@ -23,7 +23,51 @@ class signle_direction_tape : public i_tape {
         fill_buffer();
     }
 
-    virtual ~signle_direction_tape() override {
+    virtual ~file_tape() override {
+        flush();
+    }
+
+    int get() const override {
+        return buff[index_in_buffer];
+    }
+
+    void put(int x) override {
+        buff[index_in_buffer] = x;
+    }
+
+    void left() override {
+        if (index_in_buffer == 0 && buffers_from_start == 0) {
+            throw std::runtime_error("signle direction tape error: reached left border");
+        } else if (index_in_buffer > 0) {
+            --index_in_buffer;
+            return;
+        }
+        index_in_buffer = BUFF_SIZE - 1;
+
+        handle_buffs(true);
+    }
+
+    void right() override {
+        ++index_in_buffer;
+        if (index_in_buffer < buff.size()) {
+            return;
+        }
+        index_in_buffer = 0;
+
+        handle_buffs(false);
+    }
+
+    void reset() override {
+        flush();
+        is_prev_full = false;
+        seek_buff(0);
+        fill_buffer();
+        buffers_from_start = 0;
+        index_in_buffer = 0;
+    }
+
+   private:
+    void flush() {
         if (is_prev_full && is_prev_left) {
             seek_buff(buffers_from_start - 1);
             bin_util::write_vector(prev_buff, f);
@@ -36,37 +80,6 @@ class signle_direction_tape : public i_tape {
         }
     }
 
-    int get() const override {
-        return buff[index_in_buffer];
-    }
-
-    void put(int x) override {
-        buff[index_in_buffer] = x;
-    }
-
-   protected:
-    void left_impl() override {
-        if (index_in_buffer == 0 && buffers_from_start == 0) {
-            throw std::runtime_error("signle direction tape error: reached left border");
-        } else if (index_in_buffer > 0) {
-            --index_in_buffer;
-            return;
-        }
-        index_in_buffer = BUFF_SIZE - 1;
-
-        handle_buffs(true);
-    }
-    void right_impl() override {
-        ++index_in_buffer;
-        if (index_in_buffer < buff.size()) {
-            return;
-        }
-        index_in_buffer = 0;
-
-        handle_buffs(false);
-    }
-
-   private:
     void seek_buff(std::size_t buffer_form_start) {
         f.seekg(buffer_form_start * BUFF_SIZE * sizeof(std::int32_t) - f.tellg(), f.cur);
     }
@@ -118,4 +131,3 @@ class signle_direction_tape : public i_tape {
     bool is_prev_full{false};
     bool is_prev_left{false};
 };
-}  // namespace file

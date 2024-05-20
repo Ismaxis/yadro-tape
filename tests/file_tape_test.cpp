@@ -1,17 +1,15 @@
-#include <file/signle_direction_tape.h>
+#include <file/file_tape.h>
 #include <gtest/gtest.h>
-#include <i_tape.h>
+#include <tape.h>
 
 #include "test_util.h"
-
-using tape = file::signle_direction_tape;
 
 auto size = 10240;
 
 TEST(file, right) {
     test_util::test_random_vec(size, [](auto seq) {
         {
-            tape t("tmp");
+            file_tape t("tmp");
             for (auto &&i : seq) {
                 t.put(i);
                 t.right();
@@ -29,7 +27,7 @@ TEST(file, right) {
 TEST(file, left) {
     test_util::test_random_vec(size, [](auto seq) {
         {
-            tape t("tmp");
+            file_tape t("tmp");
             for (auto &&i : seq) {
                 t.right();
             }
@@ -49,7 +47,7 @@ TEST(file, left) {
 
 TEST(file, right_and_left) {
     test_util::test_random_vec(size, [](auto seq) {
-        tape t("tmp");
+        file_tape t("tmp");
         for (auto &&i : seq) {
             t.put(i);
             t.right();
@@ -64,20 +62,18 @@ TEST(file, right_and_left) {
     });
 }
 
-TEST(file, flip) {
+TEST(file, reset) {
     test_util::test_random_vec(size, [](auto seq) {
-        tape t("tmp");
+        file_tape t("tmp");
         for (auto &&i : seq) {
             t.put(i);
             t.right();
         }
 
-        std::ranges::reverse(seq);
-
-        t.flip();
+        t.reset();
         for (auto &&i : seq) {
-            t.right();
             ASSERT_EQ(i, t.get());
+            t.right();
         }
     });
 }

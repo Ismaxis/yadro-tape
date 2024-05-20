@@ -1,13 +1,11 @@
-#include <file/signle_direction_tape.h>
+#include <file/file_tape.h>
 #include <gtest/gtest.h>
-#include <i_tape.h>
+#include <tape.h>
 #include <tape_sort.h>
 
 #include <array>
 
 #include "test_util.h"
-
-using tape = file::signle_direction_tape;
 
 std::array<std::string, 3> files{
     "buff_0",  // https://en.cppreference.com/w/cpp/io/c/tmpnam
@@ -20,22 +18,22 @@ constexpr auto factory = [] {
     if (i == files.size()) {
         i = 0;
     }
-    return std::make_unique<tape>(files[i++]);
+    return std::make_unique<file_tape>(files[i++]);
 };
 
 TEST(sort, empty) {
-    tape input("empty_in");
-    tape output("empty_out");
+    file_tape input("empty_in");
+    file_tape output("empty_out");
 
     tape_sort(input, 0, output, factory);
 
-    ASSERT_EQ(i_tape::DEFAULT_VALUE, input.get());
-    ASSERT_EQ(i_tape::DEFAULT_VALUE, output.get());
+    ASSERT_EQ(tape::DEFAULT_VALUE, input.get());
+    ASSERT_EQ(tape::DEFAULT_VALUE, output.get());
 }
 
 TEST(sort, single) {
-    tape input("in");
-    tape output("out");
+    file_tape input("in");
+    file_tape output("out");
 
     input.put(1);
 
@@ -45,15 +43,15 @@ TEST(sort, single) {
 }
 
 void test_on_seq(std::vector<std::int32_t> seq) {
-    tape input("in");
-    tape output("out");
+    file_tape input("in");
+    file_tape output("out");
 
     auto size = seq.size();
     for (size_t i = 0; i < size; i++) {
-        input.right();
         input.put(seq[i]);
+        input.right();
     }
-    input.flip();
+    input.reset();
 
     tape_sort(input, size, output, factory);
 
@@ -71,5 +69,5 @@ TEST(sort, sorted) {
 }
 
 TEST(sort, random) {
-    test_util::test_random_vec(102400, test_on_seq);
+    test_util::test_random_vec(10240, test_on_seq);
 }

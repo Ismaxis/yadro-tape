@@ -3,20 +3,20 @@
 #include <algorithm>
 
 namespace {
-void copy_n(i_tape& from, size_t n, i_tape& to);
+void copy_n(tape& from, size_t n, tape& to);
 
-void merge(i_tape& buff_0, i_tape& buff_1, i_tape& ptr_0, size_t left_n, size_t right_n);
+void merge(tape& buff_0, tape& buff_1, tape& ptr_0, size_t left_n, size_t right_n);
 }  // namespace
 
-void tape_sort(i_tape& input, std::size_t n, i_tape& output,
-               std::function<std::unique_ptr<i_tape>()> tape_factory) {
+void tape_sort(tape& input, std::size_t n, tape& output,
+               std::function<std::unique_ptr<tape>()> tape_factory) {
     auto buff_0 = tape_factory();
     auto buff_1 = tape_factory();
     auto ptr_0 = tape_factory();
 
     ::copy_n(input, n, *buff_0);
 
-    buff_0->skip_n(-n);  // TODO: reset
+    buff_0->reset();
 
     bool turn = true;
     for (size_t chunk = 1; chunk < n; chunk *= 2) {
@@ -33,8 +33,8 @@ void tape_sort(i_tape& input, std::size_t n, i_tape& output,
             }
         }
         turn = !turn;
-        buff_0->skip_n(-n);
-        buff_1->skip_n(-n);
+        buff_0->reset();
+        buff_1->reset();
     }
 
     if (turn) {
@@ -42,12 +42,11 @@ void tape_sort(i_tape& input, std::size_t n, i_tape& output,
     } else {
         ::copy_n(*buff_1, n, output);
     }
-    output.skip_n(-n);  // TODO: reset
+    output.reset();
 }
 
 namespace {
-
-void copy_n(i_tape& from, size_t n, i_tape& to) {
+void copy_n(tape& from, size_t n, tape& to) {
     for (size_t i = 0; i < n; i++) {
         to.put(from.get());
         from.right();
@@ -55,14 +54,14 @@ void copy_n(i_tape& from, size_t n, i_tape& to) {
     }
 }
 
-void merge(i_tape& buff_0, i_tape& buff_1, i_tape& ptr_0, size_t left_n, size_t right_n) {
+void merge(tape& buff_0, tape& buff_1, tape& ptr_0, size_t left_n, size_t right_n) {
     for (size_t i = 0; i < left_n; i++) {
         ptr_0.put(buff_0.get());
         ptr_0.right();
         buff_0.right();
     }
 
-    ptr_0.skip_n(-left_n);  // TODO: reset
+    ptr_0.reset();
 
     size_t i = 0;
     size_t j = 0;
@@ -94,6 +93,6 @@ void merge(i_tape& buff_0, i_tape& buff_1, i_tape& ptr_0, size_t left_n, size_t 
         j++;
     }
 
-    ptr_0.skip_n(-left_n);  // TODO: reset
+    ptr_0.reset();
 }
 }  // namespace
