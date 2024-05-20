@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-class i_tape {
+class i_tape {  // TODO: abstract_tape
    public:
     constexpr static std::int32_t DEFAULT_VALUE = 0;
 
@@ -13,27 +13,15 @@ class i_tape {
 
     void left();
     void right();
-    void flip();
+
+    // Swap semantics for left & right. Current cell remains the same.
+    void flip();  // TODO: reset
     void skip_n(std::int64_t delta);
-
-    // i_tape& operator++() {
-    //     right();
-    //     return *this;
-    // }
-
-    // i_tape& operator--() {
-    //     left();
-    //     return *this;
-    // }
-
-    // std::int32_t operator*() const {
-    //     return get();
-    // }
 
    protected:
     virtual void left_impl() = 0;
     virtual void right_impl() = 0;
 
    private:
-    bool flipped{false};
+    bool is_flipped{false};
 };

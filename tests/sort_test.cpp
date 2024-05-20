@@ -10,7 +10,7 @@
 using tape = file::signle_direction_tape;
 
 std::array<std::string, 3> files{
-    "buff_0",
+    "buff_0",  // https://en.cppreference.com/w/cpp/io/c/tmpnam
     "buff_1",
     "ptr_0",
 };

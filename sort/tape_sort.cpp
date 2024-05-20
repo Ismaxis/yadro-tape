@@ -16,7 +16,7 @@ void tape_sort(i_tape& input, std::size_t n, i_tape& output,
 
     ::copy_n(input, n, *buff_0);
 
-    buff_0->skip_n(-n);
+    buff_0->skip_n(-n);  // TODO: reset
 
     bool turn = true;
     for (size_t chunk = 1; chunk < n; chunk *= 2) {
@@ -42,7 +42,7 @@ void tape_sort(i_tape& input, std::size_t n, i_tape& output,
     } else {
         ::copy_n(*buff_1, n, output);
     }
-    output.skip_n(-n);
+    output.skip_n(-n);  // TODO: reset
 }
 
 namespace {
@@ -62,7 +62,7 @@ void merge(i_tape& buff_0, i_tape& buff_1, i_tape& ptr_0, size_t left_n, size_t 
         buff_0.right();
     }
 
-    ptr_0.skip_n(-left_n);
+    ptr_0.skip_n(-left_n);  // TODO: reset
 
     size_t i = 0;
     size_t j = 0;
@@ -94,6 +94,6 @@ void merge(i_tape& buff_0, i_tape& buff_1, i_tape& ptr_0, size_t left_n, size_t 
         j++;
     }
 
-    ptr_0.skip_n(-left_n);
+    ptr_0.skip_n(-left_n);  // TODO: reset
 }
 }  // namespace

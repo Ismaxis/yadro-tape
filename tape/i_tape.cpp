@@ -1,7 +1,7 @@
 #include "i_tape.h"
 
 void i_tape::left() {
-    if (flipped) {
+    if (is_flipped) {
         right_impl();
     } else {
         left_impl();
@@ -9,7 +9,7 @@ void i_tape::left() {
 }
 
 void i_tape::right() {
-    if (flipped) {
+    if (is_flipped) {
         left_impl();
     } else {
         right_impl();
@@ -17,7 +17,7 @@ void i_tape::right() {
 }
 
 void i_tape::flip() {
-    flipped = !flipped;
+    is_flipped = !is_flipped;
 }
 
 void i_tape::skip_n(std::int64_t delta) {

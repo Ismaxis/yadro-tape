@@ -14,13 +14,11 @@ class signle_direction_tape : public i_tape {
 
    public:
     signle_direction_tape(const std::string& filename)
-        : f(filename, std::ios::in | std::ios::out | std::ios::binary),
-          buff(BUFF_SIZE),
+        : buff(BUFF_SIZE),
           prev_buff(BUFF_SIZE) {
-        if (!f) {
-            f.open(filename, std::fstream::binary | std::fstream::trunc | std::fstream::out);
-            f.close();
-            f.open(filename, std::fstream::binary | std::fstream::in | std::fstream::out);
+        f.open(filename, std::fstream::binary | std::fstream::in | std::fstream::out);
+        if (!f.is_open()) {
+            f.open(filename, std::fstream::binary | std::fstream::in | std::fstream::out | std::fstream::trunc);
         }
         fill_buffer();
     }
