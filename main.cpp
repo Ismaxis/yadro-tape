@@ -13,16 +13,6 @@
 
 #include "config/delays.h"
 
-auto example_json = R"(
-{
-    "get_delay": 1000,
-    "put_delay": 1000,
-    "left_delay": 1000,
-    "right_delay": 1000,
-    "reset_delay": 1000
-}
-)";
-
 DEFINE_string(input, "", "Path to input file");
 DEFINE_string(output, "", "Path to output file");
 DEFINE_string(config, "./config.json", R"(Path to config file. 
