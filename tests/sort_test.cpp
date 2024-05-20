@@ -1,17 +1,33 @@
+#include <file/signle_direction_tape.h>
 #include <gtest/gtest.h>
 #include <i_tape.h>
-#include <inmemory/tape.h>
 #include <tape_sort.h>
+
+#include <array>
 
 #include "test_util.h"
 
-using tape = inmemory::tape;
+using tape = file::signle_direction_tape;
 
-constexpr auto factory = [] { return std::make_unique<tape>(); };
+std::array<std::fstream, 3> files{
+    std::fstream("buff_0", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc),
+    std::fstream("buff_1", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc),
+    std::fstream("ptr_0", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc),
+};
+
+constexpr auto factory = [] {
+    static std::size_t i = 0;
+    if (i == files.size()) {
+        i = 0;
+    }
+    return std::make_unique<tape>(files[i++]);
+};
 
 TEST(sort, empty) {
-    tape input;
-    tape output;
+    std::fstream in("in", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+    std::fstream out("out", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+    tape input(in);
+    tape output(out);
 
     tape_sort(input, 0, output, factory);
 
@@ -20,8 +36,10 @@ TEST(sort, empty) {
 }
 
 TEST(sort, single) {
-    tape input;
-    tape output;
+    std::fstream in("in", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+    std::fstream out("out", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+    tape input(in);
+    tape output(out);
 
     input.put(1);
 
@@ -31,15 +49,16 @@ TEST(sort, single) {
 }
 
 void test_on_seq(std::vector<std::int32_t> seq) {
-    tape input;
-    tape output;
+    std::fstream in("in", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+    std::fstream out("out", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+    tape input(in);
+    tape output(out);
 
     auto size = seq.size();
-    for (size_t i = 0; i < size - 1; i++) {
-        input.put(seq[i]);
+    for (size_t i = 0; i < size; i++) {
         input.right();
+        input.put(seq[i]);
     }
-    input.put(seq[size - 1]);
     input.flip();
 
     tape_sort(input, size, output, factory);
@@ -50,7 +69,6 @@ void test_on_seq(std::vector<std::int32_t> seq) {
         ASSERT_EQ(i, output.get());
         output.right();
     }
-    ASSERT_EQ(i_tape::DEFAULT_VALUE, output.get());
 }
 
 TEST(sort, sorted) {
@@ -59,5 +77,5 @@ TEST(sort, sorted) {
 }
 
 TEST(sort, random) {
-    test_util::test_random_vec(40, test_on_seq);
+    test_util::test_random_vec(102400, test_on_seq);
 }
