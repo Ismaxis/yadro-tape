@@ -14,6 +14,7 @@
 #include "config/delays.h"
 
 DEFINE_string(input, "", "Path to input file");
+DEFINE_uint64(m, 1, "Memory limit for tape_sort");
 DEFINE_string(output, "", "Path to output file");
 DEFINE_string(config, "./config.json", R"(Path to config file. 
 All delays are in microseconds and 0 by default. 
@@ -80,7 +81,7 @@ void tape_sort_binary(std::filesystem::path& bin_in_filename, std::size_t n, std
     file_tape in_tape(bin_in_filename, delays);
     file_tape out_tape(bin_out_filename, delays);
 
-    tape_sort(in_tape, n, out_tape, [&] {
+    tape_sort(in_tape, n, FLAGS_m, out_tape, [&] {
         auto tmp = file_util::new_tmp_file();
         if (FLAGS_v) {
             std::cout << "  sorting tape: " << tmp << std::endl;
@@ -91,7 +92,7 @@ void tape_sort_binary(std::filesystem::path& bin_in_filename, std::size_t n, std
 
 int main(int argc, char** argv) {
     gflags::SetUsageMessage(
-        "--input <input-file> --output <output-file> --config <config-file> [-v]. Or enter --help to see help page");
+        "--input <input-file> --output <output-file> [-m <memory limit>] --config <config-file> [-v]. Or enter --help to see help page");
     gflags::ParseCommandLineFlags(&argc, &argv, true);
 
     if (argc > 1) {

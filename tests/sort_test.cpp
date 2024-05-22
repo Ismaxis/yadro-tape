@@ -17,7 +17,7 @@ TEST(sort, empty) {
     file_tape input("empty_in");
     file_tape output("empty_out");
 
-    tape_sort(input, 0, output, factory);
+    tape_sort(input, 0, 1, output, factory);
 
     ASSERT_EQ(tape::DEFAULT_VALUE, input.get());
     ASSERT_EQ(tape::DEFAULT_VALUE, output.get());
@@ -29,12 +29,13 @@ TEST(sort, single) {
 
     input.put(1);
 
-    tape_sort(input, 1, output, factory);
+    tape_sort(input, 1, 1, output, factory);
 
     ASSERT_EQ(1, output.get());
 }
 
 void test_on_seq(std::vector<std::int32_t> seq) {
+    static std::mt19937 random{std::random_device{}()};
     file_tape input("in");
     file_tape output("out");
 
@@ -45,7 +46,9 @@ void test_on_seq(std::vector<std::int32_t> seq) {
     }
     input.reset();
 
-    tape_sort(input, size, output, factory);
+    std::uniform_int_distribution<std::size_t> dist(1, 5 * size / 4);
+
+    tape_sort(input, size, dist(random), output, factory);
 
     std::ranges::sort(seq);
 
